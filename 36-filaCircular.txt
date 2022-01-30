@@ -1,0 +1,104 @@
+#include <iostream>
+
+class FilaCircular{
+    private:
+        int *itens;
+        int tamanho;
+        int inicio, fim;
+    public:
+        FilaCircular (int);
+        ~FilaCircular ();
+        void setTamanho(int);
+        void setItens (int, int);
+        void setInicio(int);
+        void setFim(int);
+        int getTamanho();
+        int getItens(int);
+        int getInicio();
+        int getFim();
+        
+        bool vazia();
+        bool cheia();
+        
+        void enfileirar(int);
+        int desenfileirar();
+    
+};
+
+FilaCircular::FilaCircular(int tam){
+    this->setTamanho(tam);
+    this->itens = new int[tam];
+    this->setInicio (0);
+    this->setFim(0);
+}
+FilaCircular::~FilaCircular(){
+   delete[] this->itens;
+}
+
+void FilaCircular::setTamanho(int tam){
+    this->tamanho = tam;
+}
+void FilaCircular::setItens (int i, int x){
+    this->itens[i] = x;
+}
+void FilaCircular::setInicio(int ini){
+    this->inicio = ini;
+}
+void FilaCircular::setFim(int fim){
+    this->fim = fim;
+}
+int FilaCircular::getTamanho(){
+    return this->tamanho;
+}
+int FilaCircular::getItens(int i){
+    return this->itens[i];
+}
+int FilaCircular::getInicio(){
+    return this->inicio;
+}
+int FilaCircular::getFim(){
+    return this->fim;
+}
+
+bool FilaCircular::vazia(){
+    return this->getInicio () == this->getFim();
+}
+bool FilaCircular::cheia(){
+    return ((this->getFim() + 1) % this->getTamanho()) == this->getInicio();
+}
+//assumimos que há espaço na fila
+void FilaCircular::enfileirar(int x){
+    this->setItens (this->getFim(), x);
+    this->setFim(this->getFim() + 1);
+}
+//assumimos que a fila não é vazia
+int FilaCircular::desenfileirar(){
+    int x = this->getItens(this->getInicio());
+    this->setInicio(this->getInicio() + 1);
+    return x;
+}
+
+int main (){
+    
+    int n, x;
+    std::cin >> n;
+    FilaCircular fila (n);
+    char op;
+    //leitura até eof (ctrl+D)
+    while(std::cin>>op){
+        switch (op){
+            case 'E' : std::cin >> x;
+                        if (!fila.cheia ()){
+                            fila.enfileirar(x);
+                        }
+                        break;
+            case 'D' : if(!fila.vazia()){
+                            x = fila.desenfileirar();
+                            std::cout << x << "\n";
+                       }
+                       break;
+        }
+    }
+    
+    return 0;
+}

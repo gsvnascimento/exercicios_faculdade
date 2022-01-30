@@ -1,0 +1,294 @@
+#include <iostream>
+
+
+        
+
+    class Relogio {
+        private:
+            int hora, minuto, segundo;
+        public:
+            Relogio ();
+            Relogio (int, int, int);
+            void setHora(int);
+            void setMinuto(int);
+            void setSegundo(int);
+            int getHora();
+            int getMinuto();
+            int getSegundo();
+            
+            void imprime ();
+            void incrementa();
+            
+            Relogio operator ++ (int); //posfixo
+    };
+    
+    Relogio::Relogio(){
+    
+    }
+    
+    Relogio::Relogio (int h, int m, int s){
+        this->setHora(h);
+        this->setMinuto(m);
+        this->setSegundo(s);
+    }
+    
+    void Relogio::setHora(int h){
+        this->hora = h;
+    }
+    void Relogio::setMinuto(int m){
+        this->minuto = m;
+    }
+    void Relogio::setSegundo(int s){
+        this->segundo = s;
+    }
+    int Relogio::getHora(){
+        return this->hora;
+    }
+    int Relogio::getMinuto(){
+        return this->minuto;
+    }
+    int Relogio::getSegundo(){
+        return this->segundo;
+    }
+    
+    void Relogio::imprime(){
+        std::cout <<this->getHora() << ":" << this->getMinuto () << ":" 
+        << this->getSegundo () << "\n";
+    }
+    
+    Relogio Relogio::operator ++ (int){
+        Relogio r (this->getHora (), this->getMinuto (), this->getSegundo());
+        this->incrementa();
+        return r; //devolve o conteúdo original (antes de incrementar)
+    }
+    
+    void Relogio::incrementa(){
+        int h, m, s;
+        h = this->getHora();
+        m = this->getMinuto();
+        s = this->getSegundo();
+        s++;
+        if(s>=60){
+            s = s % 60;
+            m++;
+        }
+        if(m >= 60){
+            m = m % 60;
+            h++;
+        }
+        this->setHora(h);
+        this->setMinuto(m);
+        this->setSegundo(s);
+    }
+    
+    //////////////////////////////////////
+    
+    class Data {
+	private:
+		int dia, mes, ano;
+	public:
+	    Data ();
+		Data (int, int, int);
+		
+		void setDia (int);
+		void setMes (int);
+		void setAno (int);
+		int getDia ();
+		int getMes ();
+		int getAno ();
+		
+		bool isBissexto ();
+		bool isValida ();
+		int getUltimoDiaDoMes();
+		
+		void printData();
+		void printData(std::string);
+		void printData(std::string, char);
+		
+		void incrementa ();
+		Data operator ++ (int); //posfixo
+};
+
+//devolve true se a data deste objeto é valida, false caso contrário
+bool Data::isBissexto (){
+	return (this->getAno()%4==0 && this->getAno()%100!=0 
+	|| this->getAno()%400==0);
+} 
+
+int Data::getUltimoDiaDoMes(){
+    int mes = this->getMes();
+    //dias do mês: 
+	//					   1   2   3   4   5   6   7   8   9  10  11  12
+	int diasDoMes[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	if(this->isBissexto()){
+		diasDoMes[2]++; //29 dias em fevereiro
+	}
+	return diasDoMes[mes];
+}
+
+
+//devolve true se a data deste objeto é valida, false caso contrário
+bool Data::isValida (){
+    int ultimoDiaDoMes = this->getUltimoDiaDoMes();
+	//verifica dias entre 1 e maxDia
+	if(this->getDia() >= 1 && this->getDia() <= ultimoDiaDoMes && 
+	//verifica mes entre 1 e 12
+	this->getMes() >= 1 && this->getMes() <= 12){
+		return 1; //true
+	}
+	return 0; //false
+}
+
+Data::Data (){
+    int x;
+    std::cout <<"Informe o dia: ";
+    std::cin >> x;
+    this->setDia(x);
+    std::cout <<"Informe o mês: ";
+    std::cin >> x;
+    this->setMes(x);
+    std::cout <<"Informe o ano: ";
+    std::cin >> x;
+    this->setAno(x);
+}
+
+//Construtor
+Data::Data (int dia, int mes, int ano){
+	this->setDia(dia);
+	this->setMes(mes);
+	this->setAno(ano);
+}
+
+//formatos: AAMMDD, AADDMM e DDMMAA
+void Data::printData(std::string formato, char separador){
+    
+    if(formato.substr(0,2).compare("AA") == 0 &&
+       formato.substr(2,2).compare("MM") == 0 &&
+       formato.substr(4).compare("DD") == 0){
+           std::cout << this->getAno() << separador << this->getMes()
+           << separador << this->getDia(); // << std::endl;
+       }
+       else if (formato.substr(0,2).compare("AA") == 0 &&
+                formato.substr(0,2).compare("AA") == 0 &&
+                formato.substr(2, 2).compare("DD") == 0 &&
+                formato.substr(4).compare("MM") == 0){
+                    std::cout << this->getAno() << separador << this->getDia()
+                    << separador << this->getMes();// << std::endl;
+                }
+        else if(formato.substr(0,2).compare("DD") == 0 &&
+                formato.substr(2,2).compare("MM") == 0 &&
+                formato.substr(4).compare("AA") == 0){
+           std::cout << this->getDia() << separador << this->getMes()
+           << separador << this->getAno();// << std::endl;
+       }
+}
+    
+void Data::printData(){
+    this->printData("DDMMAA", '/');
+}
+void Data::printData (std::string formato){
+    this->printData(formato,'/');
+}
+
+//assume que a data atual é valida
+void Data::incrementa (){
+    int d, m, a;
+    d = this->getDia();
+    m = this->getMes();
+    a = this->getAno();
+    d++;
+    if(d > this->getUltimoDiaDoMes ()){
+        d = 1;
+        m++;
+    }
+    if(m > 12){
+        m = 1;
+        a++;
+    }
+    this->setDia(d);
+    this->setMes(m);
+    this->setAno(a);
+}
+
+
+//Metodos modificadores
+void Data::setDia(int d){
+	this->dia = d;
+}
+void Data::setMes(int m){
+	this->mes = m;
+}
+void Data::setAno(int a){
+	this->ano = a;
+}
+
+//Metodos de acesso
+int Data::getDia(){
+	return this->dia;
+}
+int Data::getMes(){
+	return this->mes;
+}
+int Data::getAno(){
+	return this->ano;
+}
+
+///////////////////
+
+class DataPrecisa24 : public Data, public Relogio {
+    private:
+    
+    public:
+        DataPrecisa24 ();
+        DataPrecisa24 (int, int, int, int, int, int);
+        void imprime();
+        void incrementa();
+        DataPrecisa24 operator ++ (int);
+};
+    
+    
+DataPrecisa24::DataPrecisa24 (){
+    
+}
+DataPrecisa24::DataPrecisa24 (int d, int m, int a, int h, int mi, int s) :
+    Data (d, m, a),
+    Relogio (h, mi, s){
+    
+}
+void DataPrecisa24::imprime(){
+    this->Data::printData();
+    std::cout << " ";
+    this->Relogio::imprime();
+}
+//assume que a data e hora atuais sao validas
+//incrementa 1 segundo 
+void DataPrecisa24::incrementa(){
+    this->Relogio::incrementa(); //incrementa 1 segundo
+    int h = this->getHora();
+    if(h == 24){
+        h = 0;
+        this->Data::incrementa();//incrementa 1 dia
+    }
+    this->setHora(h);
+}
+        
+DataPrecisa24 DataPrecisa24::operator ++ (int){
+    DataPrecisa24 DataPrecisa24 (this->getDia(), this->getMes (), this->getAno(),
+    this->getHora(), this->getMinuto(), this->getSegundo());
+    this->incrementa();
+    return DataPrecisa24;
+}
+
+/////////////////////////////////////
+    
+    int main (){
+        int d, m, a, h, mi, s;
+        char op;
+        std::cin >> d >> m >> a >> h >> mi >> s;
+        DataPrecisa24 dataPrecisa24(d, m, a, h, mi, s);
+        while(std::cin >> op){
+            dataPrecisa24++;
+        }
+        dataPrecisa24.imprime();
+        return 0;
+    }

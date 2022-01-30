@@ -1,0 +1,205 @@
+#include <iostream>
+
+class Item {
+    private:
+        int chave;
+        Item *proximo;
+    public:
+        Item (int);
+        void setChave (int);
+        int getChave ();
+        void setProximo (Item *);
+        Item * getProximo ();
+};
+
+class Lista{
+    private:
+        Item *primeiro;
+        int quantidade;
+    public:
+        Lista ();
+        ~Lista ();
+        void setPrimeiro (Item *);
+        void setQuantidade (int);
+        Item * getPrimeiro ();
+        int getQuantidade ();
+        
+        bool vazia ();
+        void imprimir ();
+        
+        void inserir (int);
+        Item * buscar (int);
+        Item * remover (int);
+};
+//cria um novo item
+Item::Item (int x){
+    this->setChave(x);
+    this->setProximo(NULL);
+}
+
+void Item::setChave (int x){
+     this->chave = x;
+}
+int Item::getChave (){
+     return this->chave;
+}
+void Item::setProximo(Item *ptr){
+    this->proximo = ptr;
+}
+Item * Item::getProximo(){
+    return this->proximo;
+}
+
+Lista::Lista (){
+    this->setPrimeiro(NULL);
+    this->setQuantidade(0);
+}
+Lista::~Lista (){
+    Item *anterior = NULL, *atual = this->getPrimeiro();
+    while(atual != NULL){
+        anterior = atual;
+        atual = atual->getProximo();
+        delete anterior;
+    }
+}
+void Lista::setPrimeiro (Item *ptr){
+    this->primeiro = ptr;
+}
+void Lista::setQuantidade (int q){
+    this->quantidade = q;
+}
+Item * Lista::getPrimeiro (){
+    return this->primeiro;
+}
+int Lista::getQuantidade (){
+    return this->quantidade;
+}
+        
+bool Lista::vazia (){
+    return this->getPrimeiro() == NULL;
+}
+void Lista::imprimir (){
+    Item *anterior = NULL, *atual = this->getPrimeiro();
+    while(atual != NULL && atual->getProximo() != NULL){
+        std::cout << atual->getChave () << " ";
+        anterior = atual;
+        atual = atual->getProximo();
+    }
+    if(atual){
+        std::cout << atual->getChave() << "\n";
+    }
+}
+    
+void Lista::inserir (int x){
+    //cria novo item: ajusta a chave x, proximo para NULL
+    Item *novoItem = new Item (x);
+    //caso 1, lista vazia
+    if(this->vazia()){
+        this->setPrimeiro(novoItem);
+        this->setQuantidade(1);
+    }
+    //caso 2: senao, procura posicao de insercao
+    else if(this->buscar (x) == NULL){
+        Item *anterior = NULL, *atual = this->getPrimeiro();
+        while(atual != NULL && x > atual->getChave()){
+            anterior = atual;
+            atual = atual->getProximo();
+        }
+        //caso 2a: insere no fim da lista
+        if(atual == NULL){
+            anterior->setProximo(novoItem);
+        }
+        //caso 2b:insere no inicio da lista
+        else if(anterior == NULL){
+            novoItem->setProximo(this->getPrimeiro());
+            this->setPrimeiro(novoItem);
+        }
+        else{ //caso 2c: insere no meio da lista
+            anterior->setProximo(novoItem);
+            novoItem->setProximo(atual);
+        }
+        this->setQuantidade(this->getQuantidade()+1);
+    }
+    else{//se chave repetida, libera memoria
+        delete novoItem;
+    }
+}
+//devolve o ponteiro para x caso exista 
+//devolve null caso contrário
+Item * Lista::buscar (int x){
+    Item *anterior = NULL, *atual = this->getPrimeiro();
+    while(atual != NULL && x > atual->getChave()){
+        anterior = atual;
+        atual = atual->getProximo();
+    }
+    if(atual != NULL && atual->getChave () == x){
+        return atual;
+    }
+    return NULL;
+}
+//devolve ponteiro para o item removido, caso exista 
+//devolve null, caso contrario
+Item * Lista::remover (int x){
+    if(this->vazia()){
+        return NULL;
+    }
+    else if(this->buscar(x) == NULL){
+        return NULL;
+    }
+    else{
+        Item *anterior = NULL, *atual = this->getPrimeiro();
+        while(atual != NULL && x > atual->getChave()){
+            anterior = atual;
+            atual = atual->getProximo();
+        }
+        //caso 2a: remove do fim da lista
+        if(atual->getProximo() == NULL){
+            anterior->setProximo(NULL);
+        }
+        //caso 2b:remove do inicio da lista
+        else if(anterior == NULL){
+            this->setPrimeiro(atual->getProximo());
+        }
+        else{ //caso 2c: remove do meio da lista
+            anterior->setProximo(atual->getProximo());
+        }
+        this->setQuantidade(this->getQuantidade()-1);
+        return atual; //precisamos executar dele la fora
+    }
+}       
+
+int main(){
+    
+    Lista lista;
+    char op;
+    int x;
+    Item *ptr = NULL;
+    //leitura ate eof
+    while(std::cin >> op){
+        switch(op){
+            case 'I': std::cin >> x;
+                        lista.inserir (x);
+                        break;
+            case 'R': std::cin >> x;
+                        ptr = lista.remover (x);
+                        if(ptr != NULL){
+                            delete ptr;
+                        }
+                        break;
+            case 'B': std::cin >> x;
+                        if(lista.buscar (x)){
+                            std::cout << "SIM\n";
+                        }
+                        else{
+                            std::cout << "NAO\n";
+                        }
+                        break;
+            case 'L':   lista.imprimir ();
+                        break;
+        }
+    }
+    
+    return 0;
+}
+        
+        

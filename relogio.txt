@@ -1,0 +1,167 @@
+#include <iostream>
+
+class Relogio {
+    private:
+        int hora, minuto, segundo;
+    public:
+        Relogio ();
+        Relogio (int, int, int);
+        void setHora(int);
+        void setMinuto(int);
+        void setSegundo(int);
+        int getHora();
+        int getMinuto();
+        int getSegundo();
+        
+        void imprime ();
+        void incrementaS();
+        void incrementaM();
+        void incrementaH();
+        
+        Relogio operator ++ (int); //posfixo
+        Relogio operator -- (int); //posfixo
+        Relogio operator + (int); //posfixo
+};
+    
+Relogio::Relogio(){
+    
+}
+    
+Relogio::Relogio (int h, int m, int s){
+    this->setHora(h);
+    this->setMinuto(m);
+    this->setSegundo(s);
+}
+    
+void Relogio::setHora(int h){
+    this->hora = h;
+}
+void Relogio::setMinuto(int m){
+    this->minuto = m;
+}
+void Relogio::setSegundo(int s){
+    this->segundo = s;
+}
+int Relogio::getHora(){
+    return this->hora;
+}
+int Relogio::getMinuto(){
+    return this->minuto;
+}
+int Relogio::getSegundo(){
+    return this->segundo;
+}
+    
+void Relogio::imprime(){
+    std::cout <<this->getHora() << ":" << this->getMinuto () << ":" 
+    << this->getSegundo () << "\n";
+}
+    
+    Relogio Relogio::operator ++ (int){
+    Relogio r (this->getHora (), this->getMinuto (), this->getSegundo());
+    this->incrementaS();
+    return r; //devolve o conteúdo original (antes de incrementar)
+    }
+
+    Relogio Relogio::operator -- (int){
+    Relogio r (this->getHora (), this->getMinuto (), this->getSegundo());
+    this->incrementaM();
+    return r; //devolve o conteúdo original (antes de incrementar)
+    }
+    
+    Relogio Relogio::operator +  (int){
+    Relogio r (this->getHora (), this->getMinuto (), this->getSegundo());
+    this->incrementaH();
+    return r; //devolve o conteúdo original (antes de incrementar)
+    }
+
+void Relogio::incrementaS () {
+    int h, m, s;
+    h = this->getHora ();
+    m = this->getMinuto ();
+    s = this->getSegundo ();
+    s++;
+    if (s >= 60) {
+        s = s % 60;
+        m++;
+    }
+    if (m >= 60) {
+        m = m % 60;
+        h++;
+    }
+    if (h > 23) {
+        h = 0;
+    }
+    this->setHora (h);
+    this->setMinuto (m);
+    this->setSegundo (s);
+}
+
+void Relogio::incrementaM () {
+    int h, m, s;
+    h = this->getHora ();
+    m = this->getMinuto ();
+    s = this->getSegundo ();
+    m++;
+    if (s >= 60) {
+        s = s % 60;
+        m++;
+    }
+    if (m >= 60) {
+        m = m % 60;
+        h++;
+    }
+    if (h > 23) {
+    h = 0;
+    }
+    this->setHora (h);
+    this->setMinuto (m);
+    this->setSegundo (s);
+}
+
+void Relogio::incrementaH () {
+    int h, m, s;
+    h = this->getHora ();
+    m = this->getMinuto ();
+    s = this->getSegundo ();
+    h++;
+    if (s >= 60) {
+        s = s % 60;
+        m++;
+    }
+    if (m >= 60) {
+        m = m % 60;
+        h++;
+    }
+    if (h > 23) {
+    h = 0;
+    }
+    this->setHora (h);
+    this->setMinuto (m);
+    this->setSegundo (s);
+}
+
+int main () {
+    int H, M, S;
+    std::string op;
+    std::cin >> H >> M >> S;
+    Relogio r (H, M, S);
+    if (0 <= H < 24 || 0 <= M, S < 60 ) {
+        while (std::cin >> op) {
+        if (op.compare("tic") == 0) {
+            r++;
+            } else if (op.compare ("tac") == 0){
+            r--;    
+            } else if (op.compare ("toc") == 0){
+            r+1;   
+            }
+            //r.incrementa ();
+        }
+       
+    } else {
+        std::cout << "invalido";
+        return 0;
+    }
+    r.imprime ();
+    return 0;
+}

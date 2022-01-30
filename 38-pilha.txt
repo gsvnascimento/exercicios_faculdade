@@ -1,0 +1,139 @@
+#include <iostream>
+
+class Item
+{
+    private:
+        int chave;
+        Item *proximo;
+    public:
+        Item (int);
+        void setChave (int);
+        int getChave ();
+        void setProximo (Item *);
+        Item * getProximo ();
+};
+
+class Pilha
+{
+    private:
+        Item *topo;
+        int quantidade;
+    public:
+        Pilha ();
+        ~Pilha ();
+        void setTopo (Item*);
+        void setQuantidade (int);
+        Item *getTopo ();
+        int getQuantidade ();
+        
+        bool vazia ();
+        void imprimir ();
+        
+        void empilhar (int);
+        int desempilhar ();
+};
+
+Item::Item (int x) {
+    this->setChave (x);
+    this->setProximo (NULL);
+}
+
+void Item::setChave (int x) {
+    this->chave = x;
+}
+
+int Item::getChave () {
+    return this->chave;
+}
+
+void Item::setProximo (Item *ptr) {
+    this->proximo = ptr;
+}
+
+Item * Item::getProximo () {
+    return this->proximo;
+}
+
+Pilha::Pilha () {
+    this->setTopo (NULL);
+    this->setQuantidade (0);
+}
+
+Pilha::~Pilha () {
+    Item *anterior = NULL, *atual = this->getTopo ();
+    while (atual) {
+        anterior = atual;
+        atual = atual->getProximo ();
+        delete anterior;
+    }
+}
+
+void Pilha::setTopo (Item *ptr) {
+    this->topo = ptr;
+}
+
+void Pilha::setQuantidade (int q) {
+    this->quantidade = q;
+}
+
+Item * Pilha::getTopo () {
+    return this->topo;
+}
+
+int Pilha::getQuantidade () {
+    return this->quantidade;
+}
+
+bool Pilha::vazia () {
+    return this->getTopo () == NULL;
+}
+
+void Pilha::imprimir () {
+    Item *anterior = NULL, *atual = this->getTopo ();
+    while (atual && atual->getProximo ()) {
+        std::cout << atual->getChave () << " ";
+        anterior = atual;
+        atual = atual->getProximo ();
+    }
+    if (atual) {
+        std::cout << atual->getChave () << "\n";
+    }
+}
+
+void Pilha::empilhar (int x) {
+    Item *novoItem = new Item (x);
+    novoItem->setProximo (this->getTopo ());
+    this->setTopo (novoItem);
+    this->setQuantidade (this->getQuantidade () + 1);
+}
+// Assume que a pilha nao estah vazia.
+int Pilha::desempilhar () {
+    Item *ptr = this->getTopo ();
+    int x = ptr->getChave ();
+    this->setTopo (ptr->getProximo());
+    delete ptr;
+    this->setQuantidade (this->getQuantidade () - 1);
+    return x;
+}
+
+int main () {
+    Pilha pilha;
+    char op;
+    int x;
+    // leitura ateh EOF (ctrl+d)
+    while (std::cin >> op) {
+        switch (op) {
+        case 'E': std::cin >> x;
+            pilha.empilhar (x);
+            break;
+        case 'D': if (!pilha.vazia ()) {
+            x = pilha.desempilhar ();
+            std::cout << "[" << x << "]\n";
+        }
+            break;
+        case 'M': pilha.imprimir ();
+            break;
+        }
+    }
+    return 0;
+}

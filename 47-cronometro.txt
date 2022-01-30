@@ -1,0 +1,94 @@
+#include <iostream>
+
+
+    
+    class Relogio {
+        private:
+            int hora, minuto, segundo;
+        public:
+            Relogio ();
+            Relogio (int, int, int);
+            void setHora(int);
+            void setMinuto(int);
+            void setSegundo(int);
+            int getHora();
+            int getMinuto();
+            int getSegundo();
+            
+            void imprime ();
+            void incrementa();
+            
+            Relogio operator ++ (int); //posfixo
+    };
+    
+    Relogio::Relogio(){
+    
+    }
+    
+    Relogio::Relogio (int h, int m, int s){
+        this->setHora(h);
+        this->setMinuto(m);
+        this->setSegundo(s);
+    }
+    
+    void Relogio::setHora(int h){
+        this->hora = h;
+    }
+    void Relogio::setMinuto(int m){
+        this->minuto = m;
+    }
+    void Relogio::setSegundo(int s){
+        this->segundo = s;
+    }
+    int Relogio::getHora(){
+        return this->hora;
+    }
+    int Relogio::getMinuto(){
+        return this->minuto;
+    }
+    int Relogio::getSegundo(){
+        return this->segundo;
+    }
+    
+    void Relogio::imprime(){
+        std::cout <<this->getHora() << ":" << this->getMinuto () << ":" 
+        << this->getSegundo () << "\n";
+    }
+    
+    Relogio Relogio::operator ++ (int){
+        Relogio r (this->getHora (), this->getMinuto (), this->getSegundo());
+        this->incrementa();
+        return r; //devolve o conteúdo original (antes de incrementar)
+    }
+    
+    void Relogio::incrementa(){
+        int h, m, s;
+        h = this->getHora();
+        m = this->getMinuto();
+        s = this->getSegundo();
+        s++;
+        if(s>=60){
+            s = s % 60;
+            m++;
+        }
+        if(m >= 60){
+            m = m % 60;
+            h++;
+        }
+        this->setHora(h);
+        this->setMinuto(m);
+        this->setSegundo(s);
+    }
+    
+    int main (){
+        std::string op;
+        Relogio r (0, 0, 0);
+        while(std::cin >> op){
+            if (op.compare("tic") == 0){
+                r++;
+                //r.incrementa();
+            }
+        }
+        r.imprime();
+        return 0;
+    }

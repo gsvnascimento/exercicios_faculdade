@@ -1,0 +1,141 @@
+#include <iostream>
+
+class Item
+{
+    private:
+        int chave;
+        Item *proximo;
+    public:
+        Item (int);
+        void setChave (int);
+        int getChave ();
+        void setProximo (Item *);
+        Item * getProximo ();
+};
+
+class Fila
+{
+    private:
+        Item *primeiro, *ultimo;
+    public:
+        Fila ();
+        ~Fila ();
+        void setPrimeiro (Item *);
+        void setUltimo (Item *);
+        Item * getPrimeiro ();
+        Item * getUltimo ();
+        bool vazia ();
+        void imprimir ();
+        void enfileirar (Item *);
+        Item *desenfileirar ();
+};
+
+Item::Item (int x) {
+    this->setChave (x);
+    this->setProximo (NULL);
+}
+
+void Item::setChave (int x) {
+    this->chave = x;
+}
+
+int Item::getChave () {
+    return this->chave;
+}
+
+void Item::setProximo (Item *ptr) {
+    this->proximo = ptr;
+}
+
+Item * Item::getProximo () {
+    return this->proximo;
+}
+
+Fila::Fila () {
+    this->setPrimeiro (NULL);
+    this->setUltimo (NULL);
+}
+
+Fila::~Fila () {
+    Item *anterior = NULL, *atual = this->getPrimeiro ();
+    while (atual) {
+        anterior = atual;
+        atual = atual->getProximo ();
+        delete anterior;
+    }
+}
+
+void Fila::setPrimeiro (Item *ptr) {
+    this->primeiro = ptr;
+}
+
+void Fila::setUltimo (Item *ptr) {
+    this->ultimo = ptr;
+}
+
+Item * Fila::getPrimeiro () {
+    return this->primeiro;
+}
+
+Item * Fila::getUltimo () {
+    return this->ultimo;
+}
+
+bool Fila::vazia () {
+    return this->getPrimeiro () == NULL;
+}
+
+void Fila::imprimir () {
+    Item *anterior = NULL, *atual = this->getPrimeiro ();
+    while (atual && atual->getProximo ()) {
+        std::cout << atual->getChave () << " ";
+        anterior = atual;
+        atual = atual->getProximo ();
+    }
+    if (atual) {
+        std::cout << atual->getChave () << "\n";
+    }
+}
+
+void Fila::enfileirar (Item *novoItem) {
+    if (this->vazia ()) {
+        this->setPrimeiro (novoItem);
+        this->setUltimo(novoItem);
+    }
+    else {
+        (this->getUltimo ())->setProximo (novoItem);
+        this->setUltimo (novoItem);
+    }
+}
+
+// Assume que a fila nao estah vazia
+Item * Fila::desenfileirar () {
+    Item *ptr = this->getPrimeiro ();
+    int x = ptr->getChave ();
+    this->setPrimeiro (ptr->getProximo ());
+    return ptr; // deve executar delete ptr !!!!
+}
+
+int main () {
+    Fila fila;
+    char op;
+    int x;
+    Item *ptr = NULL;
+    // leitura ateh EOF (ctrl+d)
+    while (std::cin >> op) {
+        switch (op) {
+            case 'E': std::cin >> x;
+                      ptr = new Item (x);
+                      fila.enfileirar (ptr);
+                      break;
+            case 'D': if (!fila.vazia ()) {
+                          ptr = fila.desenfileirar ();
+                          std::cout << "<" << ptr->getChave () << ">\n";
+                      }
+                      break;
+            case 'M': fila.imprimir ();
+                      break;
+        }
+    }
+    return 0;
+}
