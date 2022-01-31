@@ -1,5 +1,5 @@
 # exercicios_faculdade
-exercícios feitos na faculdade para serem consultados mais tarde.
+exercícios feitos na faculdade para serem consultados mais tarde, c++;
 
 35_fila : cria uma fila, podendo ser enfileirada ou desenfileirada;
 36_fila circular : cria uma fila contendo objetos, podendo ser enfileirada ou desenfileirada;
